@@ -1,0 +1,139 @@
+# Docker Compose Configuration for Local Development
+# This file sets up all services needed to run the platform locally
+#
+# Services:
+# - backend: Node.js API server
+# - frontend: React dashboard
+# - postgres: PostgreSQL database
+# - redis: Redis cache
+#
+# Run: docker-compose up
+# Stop: docker-compose down
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: fleet_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-fleet_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fleet_password}
+      POSTGRES_DB: ${DB_NAME:-fleet_platform}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-fleet_user} -d ${DB_NAME:-fleet_platform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleet_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: fleet_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleet_network
+
+  # Node.js Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fleet_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Server
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${BACKEND_PORT:-5000}
+      
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-fleet_user}
+      DB_PASSWORD: ${DB_PASSWORD:-fleet_password}
+      DB_NAME: ${DB_NAME:-fleet_platform}
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      JWT_EXPIRY: ${JWT_EXPIRY:-24h}
+      
+      # API Keys (for telematics providers)
+      SENNDER_API_KEY: ${SENNDER_API_KEY:-}
+      SENNDER_API_SECRET: ${SENNDER_API_SECRET:-}
+      TOMTOM_API_KEY: ${TOMTOM_API_KEY:-}
+      GEOTAB_USERNAME: ${GEOTAB_USERNAME:-}
+      GEOTAB_PASSWORD: ${GEOTAB_PASSWORD:-}
+      
+      # Email (for notifications)
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      
+      # App Settings
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      API_URL: ${API_URL:-http://localhost:5000}
+      
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
+    networks:
+      - fleet_network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fleet_frontend
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      REACT_APP_API_URL: ${API_URL:-http://localhost:5000}
+      REACT_APP_MAPBOX_TOKEN: ${MAPBOX_TOKEN:-}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    networks:
+      - fleet_network
+    restart: unless-stopped
+
+networks:
+  fleet_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
