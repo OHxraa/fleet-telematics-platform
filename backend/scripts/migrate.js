@@ -120,13 +120,16 @@ const migrate = async () => {
         engine_status BOOLEAN,
         rpm INTEGER,
         data_source VARCHAR(50),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_vehicle_id (vehicle_id),
-        INDEX idx_customer_id (customer_id),
-        INDEX idx_created_at (created_at)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     logger.info('✓ Create telematics_data table');
+
+    // Create indexes for telematics_data (PostgreSQL syntax)
+    await query(`CREATE INDEX IF NOT EXISTS idx_telematics_vehicle_id ON telematics_data(vehicle_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_telematics_customer_id ON telematics_data(customer_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_telematics_created_at ON telematics_data(created_at)`);
+    logger.info('✓ Create telematics_data indexes');
 
     // Create vehicle_assignments table
     await query(`
@@ -156,27 +159,34 @@ const migrate = async () => {
         acknowledged_at TIMESTAMP,
         resolved_at TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_vehicle_id (vehicle_id),
-        INDEX idx_status (status)
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     logger.info('✓ Create alerts table');
 
-    // Create RLS policies
-    await query(`
-      ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE drivers ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE trailers ENABLE ROW LEVEL SECURITY;
-      ALTER TABLE telematics_data ENABLE ROW LEVEL SECURITY;
-    `);
+    // Create indexes for alerts (PostgreSQL syntax)
+    await query(`CREATE INDEX IF NOT EXISTS idx_alerts_vehicle_id ON alerts(vehicle_id)`);
+    await query(`CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status)`);
+    logger.info('✓ Create alerts indexes');
+
+    // Enable Row Level Security
+    await query(`ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY`);
+    await query(`ALTER TABLE drivers ENABLE ROW LEVEL SECURITY`);
+    await query(`ALTER TABLE trailers ENABLE ROW LEVEL SECURITY`);
+    await query(`ALTER TABLE telematics_data ENABLE ROW LEVEL SECURITY`);
     logger.info('✓ Enable Row Level Security');
 
     logger.info('\n✅ All migrations completed successfully!\n');
     process.exit(0);
 
   } catch (error) {
-    logger.error('Migration error:', error.message);
+    logger.error('Migration error:', error);
+    logger.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+      hint: error.hint,
+    });
     process.exit(1);
   }
 };
