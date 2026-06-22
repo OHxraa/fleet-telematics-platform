@@ -6,10 +6,10 @@
 
 require('dotenv').config({ path: '.env.local' });
 
-const { query } = require('./src/config/database');
+const { query } = require('../src/config/database');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
-const logger = require('./src/utils/logger');
+const logger = require('../src/utils/logger');
 
 const seed = async () => {
   try {
@@ -245,8 +245,6 @@ const seed = async () => {
     // Create some sample telematics data
     for (const vehicleId of vehicleIds) {
       for (let i = 0; i < 10; i++) {
-        const timestamp = new Date(Date.now() - i * 3600000); // Last 10 hours
-
         await query(
           `INSERT INTO telematics_data (customer_id, vehicle_id, latitude, longitude, speed, fuel_level, odometer, engine_status, rpm, data_source)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
@@ -265,7 +263,7 @@ const seed = async () => {
         );
       }
 
-      logger.info(`✓ Telematics data created for vehicle ${vehicleId}`);
+      logger.info(`✓ Telematics data created for vehicle`);
     }
 
     logger.info(`\n✅ Database seeding completed successfully!\n`);
