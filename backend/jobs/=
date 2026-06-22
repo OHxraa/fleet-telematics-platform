@@ -1,0 +1,140 @@
+/**
+ * Geotab Background Sync Job
+ * Runs periodically to sync vehicle telematics from Geotab
+ * Usage: Integrated into server startup
+ */
+
+const cron = require('node-cron');
+const logger = require('../utils/logger');
+const TelematicsService = require('../services/telematicsService');
+const { Vehicle } = require('../models/Vehicle');
+const { query } = require('../config/database');
+
+class GeotabSyncJob {
+  constructor() {
+    this.isRunning = false;
+    this.job = null;
+    this.interval = process.env.GEOTAB_POLLING_INTERVAL || 30000; // 30 seconds
+  }
+
+  /**
+   * Start the background sync job
+   */
+  start() {
+    try {
+      logger.info('Starting Geotab sync job...');
+
+      // Run sync job every 30 seconds (configurable)
+      // Format: "*/30 * * * * *" = every 30 seconds
+      this.job = cron.schedule('*/30 * * * * *', async () => {
+        if (!this.isRunning) {
+          await this.syncAllVehicles();
+        }
+      });
+
+      logger.info('✓ Geotab sync job started (every 30 seconds)');
+      return true;
+
+    } catch (error) {
+      logger.error('Failed to start sync job:', error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Stop the background sync job
+   */
+  stop() {
+    try {
+      if (this.job) {
+        this.job.stop();
+        logger.info('✓ Geotab sync job stopped');
+      }
+    } catch (error) {
+      logger.error('Error stopping sync job:', error.message);
+    }
+  }
+
+  /**
+   * Sync all vehicles for all customers
+   */
+  async syncAllVehicles() {
+    try {
+      this.isRunning = true;
+      const startTime = Date.now();
+
+      logger.info('Geotab sync job running...');
+
+      // Get all active customers
+      const customers = await query(`
+        SELECT DISTINCT customer_id FROM vehicles WHERE deleted_at IS NULL
+      `);
+
+      let totalSynced = 0;
+      let totalErrors = 0;
+
+      for (const row of customers.rows) {
+        try {
+          const result = await TelematicsService.syncAllVehicleTelematics(row.customer_id);
+          
+          const successful = result.filter(r => r.status === 'success').length;
+          const errors = result.filter(r => r.status === 'error').length;
+
+          totalSynced += successful;
+          totalErrors += errors;
+
+          if (errors > 0) {
+            logger.warn(`Sync completed for ${row.customer_id}: ${successful} success, ${errors} errors`);
+          }
+
+        } catch (error) {
+          logger.error(`Error syncing customer ${row.customer_id}:`, error.message);
+          totalErrors++;
+        }
+      }
+
+      const duration = Date.now() - startTime;
+      logger.info(`✓ Sync job completed: ${totalSynced} vehicles synced, ${totalErrors} errors (${duration}ms)`);
+
+      this.isRunning = false;
+
+    } catch (error) {
+      logger.error('Sync job error:', error.message);
+      this.isRunning = false;
+    }
+  }
+
+  /**
+   * Sync specific vehicle immediately (manual trigger)
+   */
+  async syncVehicleNow(vehicleId) {
+    try {
+      logger.info(`Manual sync triggered for vehicle: ${vehicleId}`);
+
+      const data = await TelematicsService.syncGeotabData(vehicleId);
+
+      logger.info(`✓ Vehicle synced: ${vehicleId}`);
+      return data;
+
+    } catch (error) {
+      logger.error(`Manual sync failed: ${vehicleId}`, error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get job status
+   */
+  getStatus() {
+    return {
+      running: this.isRunning,
+      interval: `${this.interval}ms`,
+      jobActive: this.job !== null,
+    };
+  }
+}
+
+// Create singleton instance
+const geotabSyncJob = new GeotabSyncJob();
+
+module.exports = geotabSyncJob;

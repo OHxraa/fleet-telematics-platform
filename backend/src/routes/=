@@ -1,0 +1,315 @@
+/**
+ * Vehicle Routes
+ * GET /api/v1/vehicles - Get all vehicles
+ * GET /api/v1/vehicles/:id - Get vehicle by ID
+ * POST /api/v1/vehicles - Create vehicle
+ * PUT /api/v1/vehicles/:id - Update vehicle
+ * DELETE /api/v1/vehicles/:id - Delete vehicle
+ * GET /api/v1/vehicles/:id/location - Get vehicle location
+ * GET /api/v1/vehicles/:id/telematics - Get vehicle telematics
+ * GET /api/v1/vehicles/:id/stats - Get vehicle stats
+ * POST /api/v1/vehicles/sync - Sync from Geotab
+ */
+
+const express = require('express');
+const Joi = require('joi');
+const logger = require('../utils/logger');
+const { asyncHandler } = require('../middleware/errorHandler');
+const { authenticate, authorize } = require('../middleware/authenticate');
+const VehicleService = require('../services/vehicleService');
+const TelematicsService = require('../services/telematicsService');
+
+const router = express.Router();
+
+// All routes require authentication
+router.use(authenticate);
+
+/**
+ * GET /api/v1/vehicles
+ * Get all vehicles for customer
+ */
+router.get('/', asyncHandler(async (req, res) => {
+  try {
+    // TODO: Get customer ID from authenticated user
+    const customerId = req.query.customerId || 'demo-customer';
+
+    const vehicles = await VehicleService.getVehiclesByCustomer(customerId);
+
+    res.status(200).json({
+      success: true,
+      data: vehicles,
+      count: vehicles.length,
+    });
+
+  } catch (error) {
+    logger.error('Error fetching vehicles:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * GET /api/v1/vehicles/:id
+ * Get vehicle by ID
+ */
+router.get('/:id', asyncHandler(async (req, res) => {
+  try {
+    const vehicle = await VehicleService.getVehicle(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      data: vehicle,
+    });
+
+  } catch (error) {
+    logger.error('Error fetching vehicle:', error.message);
+
+    const statusCode = error.message.includes('not found') ? 404 : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * POST /api/v1/vehicles
+ * Create new vehicle
+ */
+router.post('/', asyncHandler(async (req, res) => {
+  try {
+    const schema = Joi.object({
+      customerId: Joi.string().uuid().required(),
+      name: Joi.string().required(),
+      licensePlate: Joi.string().required(),
+      vin: Joi.string(),
+      make: Joi.string(),
+      model: Joi.string(),
+      year: Joi.number().integer(),
+      vehicleType: Joi.string().valid('truck', 'van', 'car', 'trailer'),
+      geotabId: Joi.string(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: error.details[0].message,
+        },
+      });
+    }
+
+    const vehicle = await VehicleService.createVehicle(value.customerId, value);
+
+    res.status(201).json({
+      success: true,
+      data: vehicle,
+    });
+
+  } catch (error) {
+    logger.error('Vehicle creation error:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'CREATE_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * PUT /api/v1/vehicles/:id
+ * Update vehicle
+ */
+router.put('/:id', asyncHandler(async (req, res) => {
+  try {
+    const schema = Joi.object({
+      name: Joi.string(),
+      status: Joi.string().valid('active', 'inactive', 'maintenance', 'decommissioned'),
+      fuelLevel: Joi.number(),
+      mileage: Joi.number(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: error.details[0].message,
+        },
+      });
+    }
+
+    const vehicle = await VehicleService.updateVehicle(req.params.id, value);
+
+    res.status(200).json({
+      success: true,
+      data: vehicle,
+    });
+
+  } catch (error) {
+    logger.error('Vehicle update error:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'UPDATE_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * DELETE /api/v1/vehicles/:id
+ * Delete vehicle
+ */
+router.delete('/:id', authorize('admin', 'manager'), asyncHandler(async (req, res) => {
+  try {
+    const vehicle = await VehicleService.deleteVehicle(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      data: vehicle,
+      message: 'Vehicle deleted',
+    });
+
+  } catch (error) {
+    logger.error('Vehicle deletion error:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'DELETE_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * GET /api/v1/vehicles/:id/location
+ * Get vehicle current location
+ */
+router.get('/:id/location', asyncHandler(async (req, res) => {
+  try {
+    const location = await VehicleService.getVehicleLocation(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      data: location,
+    });
+
+  } catch (error) {
+    logger.error('Error fetching location:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * GET /api/v1/vehicles/:id/telematics
+ * Get vehicle telematics data
+ */
+router.get('/:id/telematics', asyncHandler(async (req, res) => {
+  try {
+    const limit = req.query.limit || 100;
+    const telematics = await VehicleService.getVehicleTelematics(req.params.id, limit);
+
+    res.status(200).json({
+      success: true,
+      data: telematics,
+      count: telematics.length,
+    });
+
+  } catch (error) {
+    logger.error('Error fetching telematics:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * GET /api/v1/vehicles/:id/stats
+ * Get vehicle statistics
+ */
+router.get('/:id/stats', asyncHandler(async (req, res) => {
+  try {
+    const days = req.query.days || 7;
+    const stats = await VehicleService.getVehicleStats(req.params.id, days);
+
+    res.status(200).json({
+      success: true,
+      data: stats,
+    });
+
+  } catch (error) {
+    logger.error('Error fetching stats:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+/**
+ * POST /api/v1/vehicles/sync-geotab
+ * Sync vehicles from Geotab
+ */
+router.post('/sync-geotab', authorize('admin', 'manager'), asyncHandler(async (req, res) => {
+  try {
+    const customerId = req.query.customerId || 'demo-customer';
+
+    const result = await VehicleService.syncAllVehiclesFromGeotab(customerId);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+      message: 'Sync completed',
+    });
+
+  } catch (error) {
+    logger.error('Sync error:', error.message);
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: 'SYNC_FAILED',
+        message: error.message,
+      },
+    });
+  }
+}));
+
+module.exports = router;

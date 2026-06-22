@@ -1,0 +1,80 @@
+/**
+ * Database Migration Runner
+ * Run with: npm run migrate
+ * Creates all database tables and initializes schema
+ */
+
+require('dotenv').config({ path: '.env.local' });
+
+const { query } = require('./src/config/database');
+const logger = require('./src/utils/logger');
+
+const migrations = [
+  {
+    name: 'Create customers table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS customers (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        name VARCHAR(255) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended')),
+        subscription_plan VARCHAR(50) DEFAULT 'starter' CHECK (subscription_plan IN ('starter', 'professional', 'enterprise')),
+        max_vehicles INT DEFAULT 10,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP
+      );
+      CREATE INDEX IF NOT EXISTS idx_customers_status ON customers(status);
+    `
+  },
+  {
+    name: 'Create drivers table',
+    sql: `
+      CREATE TABLE IF NOT EXISTS drivers (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        customer_id UUID NOT NULL,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        phone VARCHAR(20),
+        license_number VARCHAR(50) UNIQUE NOT NULL,
+        license_expiry DATE,
+        date_of_birth DATE,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'suspended')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP,
+        CONSTRAINT fk_driver_customer FOREIGN KEY (customer_id) REFERENCES customers(id)
+      );
+      CREATE INDEX IF NOT EXISTS idx_drivers_customer_id ON drivers(customer_id);
+      CREATE INDEX IF NOT EXISTS idx_drivers_license ON drivers(license_number);
+    `
+  },
+];
+
+const runMigrations = async () => {
+  try {
+    logger.info('Starting database migrations...');
+
+    for (const migration of migrations) {
+      try {
+        logger.info(`Running: ${migration.name}`);
+        await query(migration.sql);
+        logger.info(`✓ ${migration.name}`);
+      } catch (error) {
+        logger.error(`Failed: ${migration.name}`, error.message);
+        throw error;
+      }
+    }
+
+    logger.info('✓ All migrations completed successfully!');
+    process.exit(0);
+
+  } catch (error) {
+    logger.error('Migration failed:', error.message);
+    process.exit(1);
+  }
+};
+
+// Run migrations
+runMigrations();

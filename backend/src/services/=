@@ -1,0 +1,283 @@
+/**
+ * Vehicle Service
+ * Handles vehicle management, telematics sync, and location tracking
+ */
+
+const logger = require('../utils/logger');
+const { Vehicle } = require('../models/Vehicle');
+const { TelematicsData } = require('../models/TelematicsData');
+const geotabAdapter = require('../adapters/geotabAdapter');
+
+class VehicleService {
+  /**
+   * Create a new vehicle
+   */
+  static async createVehicle(customerId, vehicleData) {
+    try {
+      logger.info(`Creating vehicle: ${vehicleData.licensePlate}`);
+
+      const vehicle = await Vehicle.create({
+        customerId,
+        ...vehicleData,
+      });
+
+      logger.info(`✓ Vehicle created: ${vehicleData.licensePlate}`);
+      return vehicle;
+
+    } catch (error) {
+      logger.error('Vehicle creation error:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all vehicles for a customer
+   */
+  static async getVehiclesByCustomer(customerId) {
+    try {
+      const vehicles = await Vehicle.findByCustomer(customerId);
+      return vehicles;
+
+    } catch (error) {
+      logger.error('Error fetching vehicles:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get vehicle by ID
+   */
+  static async getVehicle(vehicleId) {
+    try {
+      const vehicle = await Vehicle.findById(vehicleId);
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+      return vehicle;
+
+    } catch (error) {
+      logger.error('Error fetching vehicle:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Update vehicle
+   */
+  static async updateVehicle(vehicleId, updateData) {
+    try {
+      logger.info(`Updating vehicle: ${vehicleId}`);
+
+      const vehicle = await Vehicle.update(vehicleId, updateData);
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+
+      logger.info(`✓ Vehicle updated: ${vehicleId}`);
+      return vehicle;
+
+    } catch (error) {
+      logger.error('Vehicle update error:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete vehicle
+   */
+  static async deleteVehicle(vehicleId) {
+    try {
+      logger.info(`Deleting vehicle: ${vehicleId}`);
+
+      const vehicle = await Vehicle.delete(vehicleId);
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+
+      logger.info(`✓ Vehicle deleted: ${vehicleId}`);
+      return vehicle;
+
+    } catch (error) {
+      logger.error('Vehicle deletion error:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Sync vehicle data from Geotab
+   */
+  static async syncVehicleFromGeotab(customerId, geotabDeviceId) {
+    try {
+      logger.info(`Syncing vehicle from Geotab: ${geotabDeviceId}`);
+
+      // Ensure Geotab is authenticated
+      await geotabAdapter.refreshSessionIfNeeded();
+
+      // Get device location
+      const location = await geotabAdapter.getDeviceLocation(geotabDeviceId);
+
+      if (!location) {
+        throw new Error('No location data from Geotab');
+      }
+
+      // Find vehicle by Geotab ID
+      let vehicle = await Vehicle.findByGeotabId(geotabDeviceId);
+
+      if (!vehicle) {
+        // Create new vehicle
+        vehicle = await Vehicle.create({
+          customerId,
+          name: location.device?.name || 'Unknown Vehicle',
+          licensePlate: location.device?.licenseNumber || 'UNKNOWN',
+          geotabId: geotabDeviceId,
+        });
+      }
+
+      // Update location
+      const updated = await Vehicle.updateLocation(
+        vehicle.id,
+        location.latitude,
+        location.longitude,
+        `${location.address?.city || ''}, ${location.address?.country || ''}`,
+        location.accuracy
+      );
+
+      logger.info(`✓ Vehicle synced from Geotab: ${vehicle.id}`);
+      return updated;
+
+    } catch (error) {
+      logger.error('Geotab sync error:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get vehicle current location
+   */
+  static async getVehicleLocation(vehicleId) {
+    try {
+      const vehicle = await Vehicle.findById(vehicleId);
+      if (!vehicle) {
+        throw new Error('Vehicle not found');
+      }
+
+      return {
+        vehicleId: vehicle.id,
+        latitude: vehicle.gps_latitude,
+        longitude: vehicle.gps_longitude,
+        accuracy: vehicle.gps_accuracy,
+        lastUpdate: vehicle.gps_last_update,
+        address: vehicle.current_location_address,
+      };
+
+    } catch (error) {
+      logger.error('Error fetching vehicle location:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get vehicle telemetry data
+   */
+  static async getVehicleTelematics(vehicleId, limit = 100) {
+    try {
+      logger.info(`Fetching telematics for vehicle: ${vehicleId}`);
+
+      const telemetrics = await TelematicsData.findLatestByVehicle(vehicleId, limit);
+      return telemetrics;
+
+    } catch (error) {
+      logger.error('Error fetching telematics:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get vehicle stats (fuel, distance, etc.)
+   */
+  static async getVehicleStats(vehicleId, days = 7) {
+    try {
+      logger.info(`Fetching stats for vehicle: ${vehicleId}`);
+
+      const stats = await TelematicsData.getVehicleStats(vehicleId, days);
+      return stats;
+
+    } catch (error) {
+      logger.error('Error fetching vehicle stats:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Sync all vehicles for customer from Geotab
+   */
+  static async syncAllVehiclesFromGeotab(customerId) {
+    try {
+      logger.info(`Syncing all vehicles from Geotab for customer: ${customerId}`);
+
+      // Get all devices from Geotab
+      const devices = await geotabAdapter.getDevices();
+
+      const syncResults = [];
+
+      for (const device of devices) {
+        try {
+          const updated = await this.syncVehicleFromGeotab(customerId, device.id);
+          syncResults.push({
+            status: 'success',
+            deviceId: device.id,
+            vehicleId: updated.id,
+          });
+        } catch (error) {
+          logger.error(`Failed to sync device ${device.id}:`, error.message);
+          syncResults.push({
+            status: 'error',
+            deviceId: device.id,
+            error: error.message,
+          });
+        }
+      }
+
+      logger.info(`✓ Synced ${devices.length} devices from Geotab`);
+      return syncResults;
+
+    } catch (error) {
+      logger.error('Error syncing vehicles from Geotab:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Assign driver to vehicle
+   */
+  static async assignDriver(vehicleId, driverId) {
+    try {
+      logger.info(`Assigning driver ${driverId} to vehicle ${vehicleId}`);
+
+      const vehicle = await Vehicle.assignDriver(vehicleId, driverId);
+
+      logger.info(`✓ Driver assigned to vehicle: ${vehicleId}`);
+      return vehicle;
+
+    } catch (error) {
+      logger.error('Error assigning driver:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get vehicles by status
+   */
+  static async getVehiclesByStatus(customerId, status) {
+    try {
+      const vehicles = await Vehicle.findByCustomer(customerId);
+      return vehicles.filter(v => v.status === status);
+
+    } catch (error) {
+      logger.error('Error filtering vehicles:', error.message);
+      throw error;
+    }
+  }
+}
+
+module.exports = VehicleService;
