@@ -1,12 +1,13 @@
 /**
  * PostgreSQL Database Configuration
  * Handles database connection, pooling, and initialization
+ * WITH SSL support for AWS RDS
  */
 
 const { Pool } = require('pg');
 const logger = require('../utils/logger');
 
-// Create connection pool
+// Create connection pool with SSL for AWS RDS
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -17,6 +18,10 @@ const pool = new Pool({
   min: parseInt(process.env.DB_POOL_MIN || 2),
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
+  // SSL Configuration for AWS RDS
+  ssl: process.env.DB_HOST && process.env.DB_HOST.includes('rds.amazonaws.com') ? {
+    rejectUnauthorized: false
+  } : false,
 });
 
 // Handle pool errors
