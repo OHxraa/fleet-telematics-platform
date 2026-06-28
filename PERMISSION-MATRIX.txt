@@ -1,0 +1,343 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║         PERMISSION MATRIX - WHAT EACH ROLE CAN DO                         ║
+║                                                                            ║
+║           ADMIN  │  MANAGER  │  SUPERVISOR  │  DRIVER  │  VIEWER        ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📊 FEATURE PERMISSIONS MATRIX:
+═════════════════════════════════════════════════════════════════════════════
+
+VEHICLES
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View all vehicles               │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ View assigned vehicle (driver)  │   ✓    │   ✓    │    ✓     │   ✓    │   ✗    │
+│ Add new vehicle                 │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ Edit vehicle details            │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Edit vehicle name/registration  │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Assign driver to vehicle        │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Delete vehicle                  │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+DRIVERS
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View all drivers                │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ View own profile                │   ✓    │   ✓    │    ✓     │   ✓    │   ✗    │
+│ Add new driver                  │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ Edit driver details             │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ View driving behaviour/scores   │   ✓    │   ✓    │    ✓     │   ✓    │   ✓    │
+│ View CPC/training status        │   ✓    │   ✓    │    ✓     │   ✓    │   ✓    │
+│ Assign training                 │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+MAINTENANCE
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View maintenance schedule       │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ Schedule maintenance            │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Edit maintenance record         │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Approve maintenance             │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ View due maintenance alerts     │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ Delete maintenance record       │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+REPORTS & ANALYTICS
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View driver behaviour reports   │   ✓    │   ✓    │    ✓     │   ✓*   │   ✓    │
+│ View maintenance reports        │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ View fuel efficiency reports    │   ✓    │   ✓    │    ✓     │   ✓*   │   ✓    │
+│ View compliance reports         │   ✓    │   ✓    │    ✗     │   ✗    │   ✓    │
+│ Export reports (PDF/CSV)        │   ✓    │   ✓    │    ✓     │   ✓*   │   ✓    │
+│ Schedule automated reports      │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ View financial reports          │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+* Own data only
+
+ALERTS & NOTIFICATIONS
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View all alerts                 │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ View own alerts                 │   ✓    │   ✓    │    ✓     │   ✓    │   ✗    │
+│ Acknowledge alerts              │   ✓    │   ✓    │    ✓     │   ✓    │   ✗    │
+│ Configure alert rules           │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+SETTINGS & ADMINISTRATION
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View system settings            │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ Edit system settings            │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+│ Manage users                    │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+│ View billing information        │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+│ Configure integrations          │   ✓    │   ✗    │    ✗     │   ✗    │   ✗    │
+│ View audit logs                 │   ✓    │   ✓    │    ✗     │   ✗    │   ✗    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+GEOFENCING & TRACKING
+┌─────────────────────────────────┬────────┬────────┬──────────┬────────┬────────┐
+│ Action                          │ ADMIN  │ MANAGER│ SUPER    │ DRIVER │ VIEWER │
+├─────────────────────────────────┼────────┼────────┼──────────┼────────┼────────┤
+│ View geofences                  │   ✓    │   ✓    │    ✓     │   ✗    │   ✓    │
+│ Create geofence                 │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ Edit geofence                   │   ✓    │   ✓    │    ✓     │   ✗    │   ✗    │
+│ View vehicle tracking           │   ✓    │   ✓    │    ✓     │   ✓*   │   ✓    │
+└─────────────────────────────────┴────────┴────────┴──────────┴────────┴────────┘
+
+═════════════════════════════════════════════════════════════════════════════
+
+🎯 TYPICAL USE CASES BY ROLE:
+═════════════════════════════════════════════════════════════════════════════
+
+ADMIN (Account Owner)
+────────────────────
+Typical User: Business owner, IT manager
+Responsibilities:
+  • Configure all system settings
+  • Manage users and permissions
+  • View financial/billing data
+  • Monitor compliance
+  • Access everything
+  
+Example: Paul Matthews (fleet owner)
+
+MANAGER (Operations Manager)
+────────────────────────────
+Typical User: Fleet operations manager
+Responsibilities:
+  • Create and manage vehicles
+  • Manage drivers and assignments
+  • Schedule and approve maintenance
+  • View all reports and metrics
+  • Create users (except other managers)
+  
+Example: Operations Lead who oversees daily fleet management
+
+SUPERVISOR (Fleet Supervisor)
+────────────────────────────
+Typical User: Supervisor, shift leader
+Responsibilities:
+  • Edit vehicle information
+  • View vehicle and driver data
+  • Create maintenance schedules
+  • View reports for vehicles in their zone
+  • Pull performance reports
+  
+Example: Maintenance supervisor who schedules work
+
+DRIVER (Vehicle Operator)
+──────────────────────
+Typical User: Truck driver, van driver
+Responsibilities:
+  • View only their assigned vehicle
+  • Check their own performance scores
+  • View own driving behaviour feedback
+  • Pull personal performance reports
+  • Cannot modify anything
+  
+Example: John (driver) assigned to Trailer 101
+
+VIEWER (Read-Only Access)
+──────────────────────
+Typical User: Insurance company, auditor, trainee
+Responsibilities:
+  • View all data
+  • Generate reports
+  • Export data
+  • Cannot modify anything
+  
+Example: External auditor reviewing fleet performance
+
+═════════════════════════════════════════════════════════════════════════════
+
+💼 REAL-WORLD PERMISSION SCENARIOS:
+═════════════════════════════════════════════════════════════════════════════
+
+Scenario 1: Supervisor Changes Vehicle Name
+────────────────────────────────────────────
+USER: Sarah (Supervisor)
+ACTION: Wants to change trailer registration from "OLD-123" to "NEW-456"
+
+Check:
+  1. Is Sarah a supervisor? ✓ YES
+  2. Does supervisor role have "vehicle.edit_name" permission? ✓ YES
+  3. Is it a system vehicle (not driver's own vehicle)? ✓ YES
+  
+Result: ✓ ALLOWED - Sarah can edit vehicle name
+
+Scenario 2: Driver Tries to Change Another Vehicle Name
+──────────────────────────────────────────────────────
+USER: John (Driver)
+ACTION: Tries to change trailer registration for trailer he doesn't drive
+
+Check:
+  1. Is John a driver? ✓ YES
+  2. Does driver role have "vehicle.edit" permission? ✗ NO
+  3. Is it John's assigned vehicle? ✗ NO
+  
+Result: ✗ DENIED - Driver cannot edit vehicles
+
+Scenario 3: Viewer Wants to Export Report
+──────────────────────────────────────────
+USER: External Auditor (Viewer)
+ACTION: Wants to export driver behaviour report as PDF
+
+Check:
+  1. Is auditor a viewer? ✓ YES
+  2. Does viewer have "reports.export" permission? ✓ YES
+  3. Is it a report-based action (read-only)? ✓ YES
+  
+Result: ✓ ALLOWED - Auditor can export reports
+
+Scenario 4: Manager Creates New Driver
+────────────────────────────────────
+USER: Operations Manager (Manager)
+ACTION: Creates new driver account
+
+Check:
+  1. Is manager a manager? ✓ YES
+  2. Does manager have "driver.create" permission? ✓ YES
+  3. No resource conflicts
+  
+Result: ✓ ALLOWED - Manager can create drivers
+
+Scenario 5: Supervisor Tries to Delete Vehicle
+──────────────────────────────────────────────
+USER: Supervisor
+ACTION: Tries to delete vehicle from system
+
+Check:
+  1. Is supervisor a supervisor? ✓ YES
+  2. Does supervisor have "vehicle.delete" permission? ✗ NO
+  
+Result: ✗ DENIED - Only admins can delete
+
+═════════════════════════════════════════════════════════════════════════════
+
+🔐 PERMISSION CHECKING IMPLEMENTATION:
+═════════════════════════════════════════════════════════════════════════════
+
+In Express routes, use permission middleware:
+
+// Example 1: Simple permission check
+router.post('/vehicles', 
+  requirePermission('vehicle.create'),
+  createVehicle
+);
+
+// Example 2: Resource access check (drivers see only own vehicle)
+router.get('/vehicles/:id',
+  requireResourceAccess('vehicle'),
+  getVehicle
+);
+
+// Example 3: Multiple checks
+router.put('/vehicles/:id',
+  requirePermission('vehicle.edit'),
+  requireResourceAccess('vehicle'),
+  updateVehicle
+);
+
+// Example 4: Combination with role check
+router.delete('/users/:id',
+  requirePermission('users.manage'),
+  requireRole(['admin', 'manager']),
+  deactivateUser
+);
+
+═════════════════════════════════════════════════════════════════════════════
+
+📋 IMPLEMENTATION CHECKLIST:
+═════════════════════════════════════════════════════════════════════════════
+
+Database:
+☐ Create users table with role field
+☐ Create roles table
+☐ Create permissions table
+☐ Create role_permissions junction table
+☐ Insert 5 default roles
+☐ Insert all permissions (30+ permissions)
+☐ Map permissions to roles
+☐ Add indexes
+
+Backend:
+☐ Create permissions middleware
+☐ Create user controller
+☐ Create user routes
+☐ Add requirePermission() check to all protected routes
+☐ Add requireResourceAccess() for resource-specific routes
+☐ Add getUserRole() middleware
+
+Testing:
+☐ Test admin can do everything
+☐ Test manager cannot delete
+☐ Test supervisor can edit vehicles
+☐ Test driver can only see own vehicle
+☐ Test viewer is read-only
+☐ Test permission denial returns 403
+
+Frontend:
+☐ Hide buttons based on user role
+☐ Show "Permission Denied" messages
+☐ Display role info in profile
+
+═════════════════════════════════════════════════════════════════════════════
+
+✨ BENEFITS OF THIS SYSTEM:
+═════════════════════════════════════════════════════════════════════════════
+
+Security:
+  ✓ Prevent unauthorized access
+  ✓ Enforce least privilege principle
+  ✓ Audit who did what
+  ✓ Regulatory compliance (GDPR, SOX)
+
+Operations:
+  ✓ Employees only see what they need
+  ✓ Prevent accidental deletions
+  ✓ Different access for different roles
+  ✓ Easy to add new users
+
+Compliance:
+  ✓ Maintain role-based access audit trail
+  ✓ Demonstrate controls to auditors
+  ✓ Meet insurance requirements
+  ✓ SOC 2 / ISO 27001 compliance
+
+═════════════════════════════════════════════════════════════════════════════
+
+🎓 EXTENDED PERMISSIONS (FUTURE):
+═════════════════════════════════════════════════════════════════════════════
+
+You could add more granular permissions:
+
+Can edit vehicle NAMES only (but not other fields):
+  vehicle.edit_name ✓ (what we have)
+  vehicle.edit_other_fields ✗
+
+Can pull reports but not export:
+  reports.view ✓
+  reports.export ✗
+
+Can view but not acknowledge:
+  alerts.view ✓
+  alerts.acknowledge ✗
+
+Can assign drivers but not create drivers:
+  vehicle.assign_driver ✓
+  driver.create ✗
+
+This allows even more fine-grained control!
+
+═════════════════════════════════════════════════════════════════════════════
+
+That's a complete enterprise-grade RBAC system! 🚀
+
+═════════════════════════════════════════════════════════════════════════════
