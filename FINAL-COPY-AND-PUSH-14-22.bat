@@ -204,12 +204,12 @@ if errorlevel 1 (
 )
 
 REM ============================================
-REM STEP 6: PUSH
+REM STEP 6: FORCE PUSH
 REM ============================================
 
 echo.
-echo Step 6: Pushing to GitHub...
-git push origin main
+echo Step 6: Force pushing to GitHub...
+git push origin main --force-with-lease
 
 if errorlevel 1 (
     echo.
