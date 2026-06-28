@@ -6,7 +6,9 @@
 
 require('dotenv').config({ path: '.env.local' });
 
-const { query } = require('../src/config/database');
+const { pool } = require('../src/config/database');
+
+const query = (text, params) => pool.query(text, params);
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const logger = require('../src/utils/logger');
