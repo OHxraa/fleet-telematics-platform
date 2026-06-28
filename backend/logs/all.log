@@ -113,3 +113,7 @@
 2026-06-23 00:41:53:4153 info: Server started successfully!
 2026-06-23 00:42:18:4218 info: ::1 - - [22/Jun/2026:23:42:18 +0000] "GET /health HTTP/1.1" 200 101 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
 2026-06-23 00:42:18:4218 info: ::1 - - [22/Jun/2026:23:42:18 +0000] "GET /favicon.ico HTTP/1.1" 404 91 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+2026-06-28 21:44:26:4426 info: Initializing PostgreSQL database...
+2026-06-28 21:44:26:4426 error: Failed to connect to database:
+2026-06-28 21:45:47:4547 info: Initializing PostgreSQL database...
+2026-06-28 21:45:47:4547 error: Failed to connect to database:

@@ -4,7 +4,7 @@
   "description": "Fleet Telematics Platform API",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon backend/src/index.js",
     "start": "node src/index.js",
     "test": "jest --testEnvironment=node",
     "migrate": "node scripts/migrate.js",
