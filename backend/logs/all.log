@@ -1,0 +1,115 @@
+2026-06-22 23:17:27:1727 info: Starting database migrations...
+2026-06-22 23:17:27:1727 error: Database query error:
+2026-06-22 23:18:33:1833 info: Starting database migrations...
+2026-06-22 23:18:33:1833 error: Database query error:
+2026-06-22 23:21:11:2111 info: Starting database migrations...
+2026-06-22 23:21:11:2111 error: Database query error:
+2026-06-23 00:29:38:2938 info: Starting database migrations...
+2026-06-23 00:29:38:2938 info: ✓ Create customers table
+2026-06-23 00:29:38:2938 info: ✓ Create users table
+2026-06-23 00:29:38:2938 info: ✓ Create vehicles table
+2026-06-23 00:29:38:2938 info: ✓ Create drivers table
+2026-06-23 00:29:38:2938 info: ✓ Create trailers table
+2026-06-23 00:29:38:2938 error: Database query error:
+2026-06-23 00:34:18:3418 info: Starting database migrations...
+2026-06-23 00:34:18:3418 info: ✓ Create customers table
+2026-06-23 00:34:18:3418 info: ✓ Create users table
+2026-06-23 00:34:18:3418 info: ✓ Create vehicles table
+2026-06-23 00:34:18:3418 info: ✓ Create drivers table
+2026-06-23 00:34:18:3418 info: ✓ Create trailers table
+2026-06-23 00:34:18:3418 info: ✓ Create telematics_data table
+2026-06-23 00:34:19:3419 info: ✓ Create telematics_data indexes
+2026-06-23 00:34:19:3419 info: ✓ Create vehicle_assignments table
+2026-06-23 00:34:19:3419 info: ✓ Create alerts table
+2026-06-23 00:34:19:3419 info: ✓ Create alerts indexes
+2026-06-23 00:34:19:3419 info: ✓ Enable Row Level Security
+2026-06-23 00:34:38:3438 info: Starting database seeding...
+2026-06-23 00:34:38:3438 info: ✓ Customer created: 1f973415-b738-40f7-9a6b-bcb56e37550a
+2026-06-23 00:34:38:3438 info: ✓ Admin user created: admin@demo.com
+2026-06-23 00:34:38:3438 info: ✓ Manager user created: manager@demo.com
+2026-06-23 00:34:38:3438 info: ✓ Driver user created: driver@demo.com
+2026-06-23 00:34:39:3439 info: ✓ Vehicle created: Volvo FH16 - Unit 001
+2026-06-23 00:34:39:3439 info: ✓ Vehicle created: Scania R450 - Unit 002
+2026-06-23 00:34:39:3439 info: ✓ Vehicle created: MAN TGX - Unit 003
+2026-06-23 00:34:39:3439 info: ✓ Vehicle created: Mercedes Sprinter - Unit 004
+2026-06-23 00:34:39:3439 info: ✓ Driver created: John Anderson
+2026-06-23 00:34:39:3439 info: ✓ Driver created: Sarah Martinez
+2026-06-23 00:34:39:3439 info: ✓ Driver created: Michael Thompson
+2026-06-23 00:34:39:3439 info: ✓ Trailer created: Refrigerated Trailer 001
+2026-06-23 00:34:39:3439 info: ✓ Trailer created: Box Trailer 002
+2026-06-23 00:34:39:3439 info: ✓ Trailer created: Flatbed Trailer 003
+2026-06-23 00:34:39:3439 info: ✓ Telematics data created for vehicle
+2026-06-23 00:34:39:3439 info: ✓ Telematics data created for vehicle
+2026-06-23 00:34:39:3439 info: ✓ Telematics data created for vehicle
+2026-06-23 00:34:40:3440 info: ✓ Telematics data created for vehicle
+2026-06-23 00:39:04:394 info: Initializing PostgreSQL database...
+2026-06-23 00:39:04:394 info: Testing database connection...
+2026-06-23 00:39:04:394 info: Database connected. Current time: Tue Jun 23 2026 00:39:04 GMT+0100 (British Summer Time)
+2026-06-23 00:39:04:394 info: ✓ PostgreSQL connected
+2026-06-23 00:39:04:394 info: Initializing Redis cache...
+2026-06-23 00:39:04:394 error: Redis Client Error
+2026-06-23 00:39:04:394 warn: Redis client reconnecting
+2026-06-23 00:39:04:394 error: Redis Client Error
+2026-06-23 00:39:04:394 warn: Redis client reconnecting
+2026-06-23 00:39:04:394 error: Redis Client Error
+2026-06-23 00:39:04:394 warn: Redis client reconnecting
+2026-06-23 00:39:04:394 error: Redis Client Error
+2026-06-23 00:39:04:394 warn: Redis client reconnecting
+2026-06-23 00:39:04:394 error: Redis Client Error
+2026-06-23 00:39:05:395 warn: Redis client reconnecting
+2026-06-23 00:39:05:395 error: Redis Client Error
+2026-06-23 00:39:05:395 warn: Redis client reconnecting
+2026-06-23 00:39:05:395 error: Redis Client Error
+2026-06-23 00:39:05:395 warn: Redis client reconnecting
+2026-06-23 00:39:05:395 error: Redis Client Error
+2026-06-23 00:39:06:396 warn: Redis client reconnecting
+2026-06-23 00:39:06:396 error: Redis Client Error
+2026-06-23 00:39:06:396 warn: Redis client reconnecting
+2026-06-23 00:39:06:396 error: Redis Client Error
+2026-06-23 00:39:06:396 warn: Redis client reconnecting
+2026-06-23 00:39:06:396 error: Redis Client Error
+2026-06-23 00:39:07:397 warn: Redis client reconnecting
+2026-06-23 00:39:07:397 error: Max Redis reconnection attempts reached
+2026-06-23 00:40:51:4051 info: Initializing PostgreSQL database...
+2026-06-23 00:40:51:4051 info: Testing database connection...
+2026-06-23 00:40:51:4051 info: Database connected. Current time: Tue Jun 23 2026 00:40:51 GMT+0100 (British Summer Time)
+2026-06-23 00:40:51:4051 info: ✓ PostgreSQL connected
+2026-06-23 00:40:51:4051 info: Initializing Redis cache...
+2026-06-23 00:40:51:4051 error: Redis Client Error
+2026-06-23 00:40:51:4051 warn: Redis client reconnecting
+2026-06-23 00:40:51:4051 error: Redis Client Error
+2026-06-23 00:40:51:4051 warn: Redis client reconnecting
+2026-06-23 00:40:51:4051 error: Redis Client Error
+2026-06-23 00:40:51:4051 warn: Redis client reconnecting
+2026-06-23 00:40:51:4051 error: Redis Client Error
+2026-06-23 00:40:51:4051 warn: Redis client reconnecting
+2026-06-23 00:40:51:4051 error: Redis Client Error
+2026-06-23 00:40:52:4052 warn: Redis client reconnecting
+2026-06-23 00:40:52:4052 error: Redis Client Error
+2026-06-23 00:40:52:4052 warn: Redis client reconnecting
+2026-06-23 00:40:52:4052 error: Redis Client Error
+2026-06-23 00:40:52:4052 warn: Redis client reconnecting
+2026-06-23 00:40:52:4052 error: Redis Client Error
+2026-06-23 00:40:53:4053 warn: Redis client reconnecting
+2026-06-23 00:40:53:4053 error: Redis Client Error
+2026-06-23 00:40:53:4053 warn: Redis client reconnecting
+2026-06-23 00:40:53:4053 error: Redis Client Error
+2026-06-23 00:40:53:4053 warn: Redis client reconnecting
+2026-06-23 00:40:53:4053 error: Redis Client Error
+2026-06-23 00:40:54:4054 warn: Redis client reconnecting
+2026-06-23 00:40:54:4054 error: Max Redis reconnection attempts reached
+2026-06-23 00:41:53:4153 info: Initializing PostgreSQL database...
+2026-06-23 00:41:53:4153 info: Testing database connection...
+2026-06-23 00:41:53:4153 info: Database connected. Current time: Tue Jun 23 2026 00:41:53 GMT+0100 (British Summer Time)
+2026-06-23 00:41:53:4153 info: ✓ PostgreSQL connected
+2026-06-23 00:41:53:4153 info: Initializing Redis cache...
+2026-06-23 00:41:53:4153 warn: Redis not available (optional in development):
+2026-06-23 00:41:53:4153 warn: ⚠ Redis unavailable - caching disabled (development mode)
+2026-06-23 00:41:53:4153 info: ✓ Redis connected
+2026-06-23 00:41:53:4153 info: ✓ Server running on port 5000
+2026-06-23 00:41:53:4153 info: ✓ Environment: development
+2026-06-23 00:41:53:4153 info: ✓ API Documentation: http://localhost:5000/api/docs
+2026-06-23 00:41:53:4153 info: ✓ Health Check: http://localhost:5000/health
+2026-06-23 00:41:53:4153 info: Server started successfully!
+2026-06-23 00:42:18:4218 info: ::1 - - [22/Jun/2026:23:42:18 +0000] "GET /health HTTP/1.1" 200 101 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
+2026-06-23 00:42:18:4218 info: ::1 - - [22/Jun/2026:23:42:18 +0000] "GET /favicon.ico HTTP/1.1" 404 91 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36 Edg/149.0.0.0"
